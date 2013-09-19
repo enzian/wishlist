@@ -1,0 +1,71 @@
+<div class="<?php echo $this->class; ?> block"<?php echo $this->cssID; ?><?php if ($this->style): ?> style="<?php echo $this->style; ?>"<?php endif; ?>>
+
+<?php if ($this->headline): ?>
+<<?php echo $this->hl; ?>><?php echo $this->headline; ?></<?php echo $this->hl; ?>>
+<?php endif; ?>
+
+
+<?php foreach ($this->categories as $category): ?>
+	<div class="category id<?php echo $category['id']; ?>">
+		<h2><?php echo $category['title']; ?></h2>
+		<?php if(array_key_exists('description',  $category) && $category['description'] != ''): ?>
+			<p class="categorydesc"><?php echo $category['description']; ?></p>
+		<?php endif; ?>
+		<?php if(array_key_exists('wishes',  $category)): ?>
+			<?php foreach ($category['wishes'] as $wish): ?>
+				<div class="wish">
+					
+					<?php if ($wish['imagesrc']): ?>
+					<div class="image">
+						<image src="<?php echo $wish['imagesrc'] ?>" />
+					</div>
+					<?php endif; ?>
+					<div class="info">
+					<h3><?php echo $wish['title']; ?></h3>
+					<p class="wishdesc"><?php echo $wish['description']; ?></p>
+					<?php if ($wish['wishtype'] == 'shares'): ?>
+					<p class="price"><span><?php echo $GLOBALS['TL_LANG']['wishlist']['price'][0]; ?>: <?php echo $wish['pricepershare']; ?> <?php echo $this->currency_short; ?><span/></p>
+					<?php if ($this->isEditable): ?>
+					<?php if($wish['nofItemsAvailable'] > 0): ?>
+					<?php echo $GLOBALS['TL_LANG']['wishlist']['igive'][0]; ?>
+					<select name="<?php echo "wish" . $wish['id']; ?>" selectedIndex="-1" form="f<?php echo $this->formid; ?>">
+					<?php for ($i = 0; $i <= $wish['nofItemsAvailable']; $i++): ?>
+						<option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+					<?php endfor; ?>
+					</select> <?php echo $GLOBALS['TL_LANG']['wishlist']['shares'][0]; ?>
+					<?php endif; ?>
+					<?php if($wish['nofItemsAvailable'] == 0): ?>
+						<p class="wishfullfilled"><?php echo $GLOBALS['TL_LANG']['wishlist']['wishfullfilled'][0]; ?></p>
+					<?php endif; ?>
+					<?php endif; ?>
+					<?php else: ?>
+					<?php if ($this->isEditable): ?>
+					<?php if($wish['targetamount'] > $wish['accievedamount'] ): ?>
+						<p class='freeamount'><?php echo $GLOBALS['TL_LANG']['wishlist']['freeamount'][0];?>: <b><?php echo $wish['targetamount'] - $wish['accievedamount']; ?> <?php echo $this->currency_short; ?></b></p>
+						<p class="input_amount"><label for="<?php echo "wish" . $wish['id']; ?>"><?php echo $GLOBALS['TL_LANG']['wishlist']['igive'][0]; ?></label> <input name="<?php echo "wish" . $wish['id']; ?>" type="number" min="0" value="0" max="<?php echo $wish['targetamount'] - $wish['accievedamount']; ?>" form="f<?php echo $this->formid; ?>"/> <?php echo $this->currency_short; ?></p>
+						<div class="progress">
+							<div class="progressFull">
+								<div class="progressActual" style="width:<?php echo ($wish['accievedamount'] / $wish['targetamount']) * 100; ?>%;">
+									<span><?php echo $wish['targetamount'] / 100 * $wish['accievedamount']; ?>%</span>
+								</div>
+							</div>
+						</div>
+					<?php else: ?>
+						<p class="wishfullfilled"><?php echo $GLOBALS['TL_LANG']['wishlist']['wishfullfilled'][0]; ?></p>
+					<?php endif; ?>
+					<?php endif; ?>
+					<?php endif; ?>
+					</div>
+				</div>
+			<?php endforeach; ?>
+		<?php endif; ?>
+		<?php if(!array_key_exists('wishes',  $category)): ?>
+			<p class="noitems"><?php echo $GLOBALS['TL_LANG']['wishlist']['noItems'][0]; ?></p>
+		<?php endif; ?>
+	</div>
+<?php endforeach; ?>
+	<?php if ($this->isEditable): ?>
+		<input type="hidden" name="wishlistid" form="f<?php echo $this->formid; ?>" value="<?php echo $this->wishlistid ?>">
+	<?php endif; ?>
+ 
+</div>
